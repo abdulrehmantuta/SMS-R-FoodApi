@@ -31,19 +31,23 @@ namespace SMS_R_FoodApi.Repository
         {
             DateTime today = DateTime.UtcNow.Date;
 
-            var lastSale = _context.Sales
-                .AsEnumerable()
-                .Where(s => DateTime.Parse(s.SaleDate).Date == today)
-                .OrderByDescending(s => s.InvoiceNumber)
-                .FirstOrDefault();
+            // Ensure SaleDate is stored as DateTime
+            sale.SaleDate = today.ToString("yyyy-MM-dd");
+
+            var lastInvoice = await _context.Sales
+                .Where(s => s.SaleDate == sale.SaleDate)  // Compare date correctly
+                .OrderByDescending(s => s.Id)  // Sorting by Id to get last inserted record
+                .Select(s => s.InvoiceNumber)
+                .FirstOrDefaultAsync();
 
             int nextNumber = 1;
-            if (lastSale != null && int.TryParse(lastSale.InvoiceNumber, out int lastNumber))
+
+            if (!string.IsNullOrEmpty(lastInvoice) && int.TryParse(lastInvoice, out int lastNumber))
             {
                 nextNumber = lastNumber + 1;
             }
 
-            sale.InvoiceNumber = nextNumber.ToString("D6");
+            sale.InvoiceNumber = nextNumber.ToString("D6"); // Format as 000001, 000002
 
             _context.Sales.Add(sale);
             await _context.SaveChangesAsync();
