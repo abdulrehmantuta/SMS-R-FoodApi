@@ -9,6 +9,7 @@ namespace SMS_R_FoodApi.Repository.IRepository
         Task<Sale> GetSaleByIdAsync(int id);
         Task AddSaleAsync(Sale sale);
         Task UpdateSaleAsync(Sale sale);
-        //Task DeleteSaleAsync(int id);
+        Task DeleteSalesAsync();
+        Task DeleteById(int id);
     }
 }

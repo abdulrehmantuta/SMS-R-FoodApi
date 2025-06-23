@@ -9,6 +9,7 @@
         public string FoodCenterName { get; set; }
         public string FoodCenterAddress { get; set; }
         public List<SaleParameter> Items { get; set; }
+        public string status { get; set; }
     }
 
     public class SaleParameter

@@ -44,5 +44,19 @@ namespace SMS_R_FoodApi.Controllers
             await _saleRepository.UpdateSaleAsync(sale);
             return NoContent();
         }
+
+        [HttpDelete]
+        public async Task<ActionResult> DeleteSalesAsync()
+        {
+            await _saleRepository.DeleteSalesAsync();
+            return NoContent();
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> DeleteById(int id)
+        {
+            await _saleRepository.DeleteById(id);
+            return NoContent();
+        }
     }
 }

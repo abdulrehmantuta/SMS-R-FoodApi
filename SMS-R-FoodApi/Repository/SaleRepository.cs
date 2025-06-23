@@ -49,6 +49,8 @@ namespace SMS_R_FoodApi.Repository
             await _context.SaveChangesAsync();
         }
 
+
+
         public async Task UpdateSaleAsync(Sale sale)
         {
             using var transaction = await _context.Database.BeginTransactionAsync(); // ✅ Transaction start karein
@@ -97,14 +99,46 @@ namespace SMS_R_FoodApi.Repository
         }
 
 
-        //public async Task DeleteItemAsync(int id)
-        //{
-        //    var item = await _context.Sales.FindAsync(id);
-        //    if (item != null)
-        //    {
-        //        _context.Sales.Remove(item);
-        //        await _context.SaveChangesAsync();
-        //    }
-        //}
+        public async Task DeleteItemAsync(int id)
+        {
+            var item = await _context.Sales.FindAsync(id);
+            if (item != null)
+            {
+                _context.Sales.Remove(item);
+                await _context.SaveChangesAsync();
+            }
+        }
+
+        public async Task DeleteSalesAsync()
+        {
+            var sales = await _context.Sales.ToListAsync();
+            var salesParameter = await _context.SaleParameters.ToListAsync();
+            if (sales != null && sales.Any() && salesParameter != null && salesParameter.Any())
+            {
+                _context.Sales.RemoveRange(sales);
+                _context.SaleParameters.RemoveRange(salesParameter);
+                await _context.SaveChangesAsync();
+            }
+        }
+
+        public async Task DeleteById(int id)
+        {
+            var item = await _context.Sales.FindAsync(id);
+            var relatedSaleParameters = await _context.SaleParameters
+                .Where(x => x.SaleId == id)
+                .ToListAsync();
+
+            if (item != null)
+            {
+                _context.Sales.Remove(item);
+
+                if (relatedSaleParameters.Any())
+                {
+                    _context.SaleParameters.RemoveRange(relatedSaleParameters);
+                }
+
+                await _context.SaveChangesAsync();
+            }
+        }
     }
 }
